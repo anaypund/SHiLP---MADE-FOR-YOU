@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHiLP - Handmade Creations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fff7f8; overflow-x: hidden; color: #333; }
+        
+        /* Banner Section */
+        .banner {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./Media/Product.jpeg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .banner h2 {
+            font-size: 3rem;
+            font-family: 'Caveat', cursive;
+            text-align: center;
+        }
+
+        /* Header Section */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; }
+        .header h1 { font-size: 2rem; font-family: 'Caveat', cursive; color: #e75480; }
+        .header-icons { display: flex; gap: 15px; color: #333; }
+
+        /* Horizontal Tabs */
+        .tabs { display: flex; gap: 20px; overflow-x: auto; padding: 15px; background-color: #f9d5dc; border-top: 1px solid #e75480; }
+        .tab { font-weight: bold; cursor: pointer; padding: 10px 15px; border-radius: 20px; }
+        .tab.active { background-color: #e75480; color: white; }
+
+        /* Search Box */
+        #searchBox { display: none; position: absolute; top: 60px; right: 15px; background: #f1f1f1; padding: 10px; border-radius: 20px; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); }
+        #searchBox input[type="text"] { width: 200px; padding: 8px; border: none; border-radius: 15px; }
+        #searchBox i { cursor: pointer; margin-left: 10px; }
+
+        /* Product Section */
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: calc(33% - 9px); /* Default: three cards per row */
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+            transition: 0.3s ease;
+        }
+
+        /* Responsive styling for smaller screens */
+        @media (max-width: 768px) {
+            .products{
+                gap: 20px;
+            }
+            .product-card {
+                width: calc(50% - 9px); /* Two cards per row for screens 768px and below */
+            }
+            .product-card img{
+                height: 100px;
+            }
+        }
+
+        /* Footer */
+        .footer { background: #e75480; color: white; padding: 20px; display: flex; justify-content: space-between; }
+        .footer-section { font-size: 0.9rem; }
+        
+        /* Carousel */
+        .carousel { position: relative; width: 100vw; overflow: hidden; margin-top: 20px; }
+        .carousel img { width: 100vw; height: 100vh; object-fit: cover; animation: slide-animation 10s infinite; }
+        @keyframes slide-animation {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-100%); }
+        }
+
+        .cart-icon { position: fixed; bottom: 15px; left: 15px; background: #333; color: white; padding: 10px 15px; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+    
+    <!-- Header with Search & Icons -->
+    <header class="header">
+        <h1>SHiLP</h1>
+        <div class="header-icons">
+            <i class="fas fa-bell"></i>
+            <i class="fas fa-search" onclick="toggleSearchBox()"></i>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <h2>Discover Beautiful Handmade Creations</h2>
+    </section>
+
+    <!-- Search Box -->
+    <div id="searchBox">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <i class="fas fa-search" onclick="searchProducts()"></i>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <span class="tab active" onclick="filterCategory('All')">All</span>
+        <span class="tab" onclick="filterCategory('Mens')">Mens</span>
+        <span class="tab" onclick="filterCategory('Womens')">Womens</span>
+        <span class="tab" onclick="filterCategory('Accessories')">Accessories</span>
+    </div>
+
+    <!-- Carousel -->
+    <!-- <div class="carousel">
+        <img src="Media\Product.jpeg" alt="Carousel Image 1">
+        <img src="Media\Product.jpeg" alt="Carousel Image 2">
+        <img src="Media\Product.jpeg" alt="Carousel Image 3">
+    </div> -->
+
+    <!-- Products Section -->
+    <section class="products" id="productContainer"></section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-section">Contact Us: <br> 123 Handmade St, Artsy City</div>
+        <div class="footer-section">Email: hello@shilp.com</div>
+        <div class="footer-section">Follow Us: <i class="fab fa-facebook"></i> <i class="fab fa-instagram"></i> <i class="fab fa-twitter"></i></div>
+    </footer>
+
+    <!-- Cart Icon -->
+    <div class="cart-icon">
+        <i class="fas fa-shopping-cart"></i>
+    </div>
+
+    <script>
+        let searchBoxVisible = false;
+        const products = [
+            { title: "Men's Bracelet", category: "Mens", img: "./Media/Product.jpeg", keywords: ["bracelet", "mens", "accessory"] },
+            { title: "Men's Bracelet", category: "Mens", img: "./Media/Product.jpeg", keywords: ["bracelet", "mens", "accessory"] },
+            { title: "Women's Necklace", category: "Womens", img: "./Media/Product.jpeg", keywords: ["necklace", "womens", "jewelry"] },
+            { title: "Women's Necklace", category: "Womens", img: "./Media/Product.jpeg", keywords: ["necklace", "womens", "jewelry"] },
+            { title: "Handbag", category: "Accessories", img: "./Media/Product.jpeg", keywords: ["bag", "handbag", "accessories"] },
+            { title: "Handbag", category: "Accessories", img: "./Media/Product.jpeg", keywords: ["bag", "handbag", "accessories"] }
+        ];
+        
+        function toggleSearchBox() {
+            searchBoxVisible = !searchBoxVisible;
+            document.getElementById('searchBox').style.display = searchBoxVisible ? 'block' : 'none';
+        }
+
+        function populateProducts(filter = 'All') {
+            const container = document.getElementById('productContainer');
+            container.innerHTML = '';
+            products.forEach(product => {
+                if (filter === 'All' || product.category === filter || product.keywords.includes(filter.toLowerCase())) {
+                    const productCard = `
+                        <div class="product-card">
+                            <img src="${product.img}" alt="${product.title}">
+                            <h3>${product.title}</h3>
+                            <p>${product.description || 'Beautiful handmade item'}</p>
+                        </div>`;
+                    container.insertAdjacentHTML('beforeend', productCard);
+                }
+            });
+        }
+
+        function filterCategory(category) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.tab[onclick="filterCategory('${category}')"]`).classList.add('active');
+            populateProducts(category);
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            populateProducts();
+            products.forEach(product => {
+                const isMatch = product.keywords.some(keyword => keyword.includes(query));
+                document.querySelector(`[alt="${product.title}"]`).parentElement.style.display = isMatch ? 'block' : 'none';
+            });
+        }
+
+        populateProducts(); // Initial load of products
+    </script>
+</body>
+</html>
