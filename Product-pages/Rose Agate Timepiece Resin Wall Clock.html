@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rose Agate Timepiece Resin Wall Clock - SHiLP</title>
+    <title>Rose Agate Timepiece Resin Wall Clock - SHiLPP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Caveat:wght@700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <!-- Header with Search & Icons -->
     <header class="header">
-        <h1>SHiLP</h1>
+        <a href="/index.html"><h1>SHiLPP</h1></a>
         <div class="header-icons">
-            <i class="fas fa-bell"></i>
-            <i class="fas fa-search" onclick="toggleSearchBox()"></i>
+            <a href="/index.html#productContainer"><i class="fas fa-home"></i></a>
         </div>
     </header>
     <div class="container">
@@ -25,8 +25,8 @@
             <img src="../Media/Rose Agate Timepiece Resin Wall Clock.png" class="carousel-image" alt="Product Image 2">
             <img src="../Media/Rose Agate Timepiece Resin Wall Clock.png" class="carousel-image" alt="Product Image 3">
             <div class="carousel-controls">
-                <i class="fas fa-chevron-left" id="prevBtn"></i>
-                <i class="fas fa-chevron-right" id="nextBtn"></i>
+                <!-- <i class="fas fa-chevron-left" id="prevBtn"></i>
+                <i class="fas fa-chevron-right" id="nextBtn"></i> -->
             </div>
             
         </div>
@@ -41,7 +41,7 @@
             <div class="price">
                 <span class="discounted-price">&#8377;1320</span> <text>1500</text>
             </div>
-            <button class="add-to-cart">Add to Cart</button>
+            <button class="add-to-cart" onclick="openPopup()">Add to Cart</button>
 
             <div class="description">
                 Make a statement with our vibrant and colorful handmade resin wall clocks! Perfect for adding a pop of color to any room, or as a thoughtful gift for friends and family.
@@ -59,8 +59,31 @@
             <button id="share-btn" class="add-to-cart" style="margin-top: 20px;">Share</button>
         </div>
     </div>
+</div>
+
+<div id="popupContainer" class="popup-container">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup()">&#10005;</span>
+        <iframe src="https://forms.gle/9RSPhuirxbmRhmfD9" width="100%" height="500px" style="border: none;"></iframe>
     </div>
+</div>
+    
 <script>
+    function openPopup() {
+        document.getElementById("popupContainer").style.display = "flex";
+    }
+    
+    function closePopup() {
+        document.getElementById("popupContainer").style.display = "none";
+    }
+    
+    window.onclick = function(event) {
+        const popup = document.getElementById("popupContainer");
+        if (event.target === popup) {
+            popup.style.display = "none";
+        }
+    }
+
     document.getElementById('share-btn').addEventListener('click', async () => {
     if (navigator.share) {
         try {
