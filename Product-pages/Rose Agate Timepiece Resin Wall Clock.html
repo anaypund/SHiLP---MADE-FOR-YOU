@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page - SHiLP</title>
+    <title>Rose Agate Timepiece Resin Wall Clock - SHiLP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
     <!-- Header with Search & Icons -->
@@ -21,9 +21,9 @@
     <div class="product-container">
         <!-- Carousel Section -->
         <div class="carousel-container">
-            <img src="./Media/Product.jpeg" class="carousel-image active" alt="Product Image 1">
-            <img src="https://via.placeholder.com/600x500?text=Product+Image+2" class="carousel-image" alt="Product Image 2">
-            <img src="https://via.placeholder.com/600x500?text=Product+Image+3" class="carousel-image" alt="Product Image 3">
+            <img src="../Media/Rose Agate Timepiece Resin Wall Clock.png" class="carousel-image active" alt="Product Image 1">
+            <img src="../Media/Rose Agate Timepiece Resin Wall Clock.png" class="carousel-image" alt="Product Image 2">
+            <img src="../Media/Rose Agate Timepiece Resin Wall Clock.png" class="carousel-image" alt="Product Image 3">
             <div class="carousel-controls">
                 <i class="fas fa-chevron-left" id="prevBtn"></i>
                 <i class="fas fa-chevron-right" id="nextBtn"></i>
@@ -33,33 +33,51 @@
 
         <!-- Product Details Section -->
         <div class="product-details">
-            <h1>SHiLP Handmade Product</h1>
-            <div class="review-stars">
+            <h1>Rose Agate Timepiece Resin Wall Clock</h1>
+            <!-- <div class="review-stars">
                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-            </div>
+            </div> -->
+            Get it now at just
             <div class="price">
-                <span class="discounted-price">$69.99</span> $49.99
+                <span class="discounted-price">&#8377;1320</span> <text>1500</text>
             </div>
             <button class="add-to-cart">Add to Cart</button>
 
             <div class="description">
-                Exquisite handmade craft made with love and dedication, perfect for your unique taste and lifestyle.
+                Make a statement with our vibrant and colorful handmade resin wall clocks! Perfect for adding a pop of color to any room, or as a thoughtful gift for friends and family.
             </div>
 
             <div class="product-specs">
                 <h2>Product Specifications</h2>
                 <ul>
-                    <li>Material: 100% organic cotton</li>
                     <li>Handcrafted with care</li>
-                    <li>Available in multiple colors</li>
+                    <li>Material: Resin</li>
+                    <li>Size: 12 x 12 Inches</li>
                     <li>Eco-friendly and sustainable</li>
                 </ul>
             </div>
-            <button class="add-to-cart" style="margin-top: 20px;">Add to Cart</button>
+            <button id="share-btn" class="add-to-cart" style="margin-top: 20px;">Share</button>
         </div>
     </div>
     </div>
 <script>
+    document.getElementById('.share-btn').addEventListener('click', async () => {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: document.title,
+                url: window.location.href
+            });
+            console.log('Page shared successfully');
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    } else {
+        alert("Sharing not supported on this browser.");
+    }
+});
+
+
     const images = document.querySelectorAll('.carousel-image');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');

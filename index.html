@@ -70,12 +70,15 @@
     <script>
         let searchBoxVisible = false;
         const products = [
-            { title: "Men's Bracelet", category: "Mens", img: "./Media/Product.jpeg", keywords: ["bracelet", "mens", "accessory"] },
-            { title: "Men's Bracelet", category: "Mens", img: "./Media/Product.jpeg", keywords: ["bracelet", "mens", "accessory"] },
-            { title: "Women's Necklace", category: "Womens", img: "./Media/Product.jpeg", keywords: ["necklace", "womens", "jewelry"] },
-            { title: "Women's Necklace", category: "Womens", img: "./Media/Product.jpeg", keywords: ["necklace", "womens", "jewelry"] },
-            { title: "Handbag", category: "Accessories", img: "./Media/Product.jpeg", keywords: ["bag", "handbag", "accessories"] },
-            { title: "Handbag", category: "Accessories", img: "./Media/Product.jpeg", keywords: ["bag", "handbag", "accessories"] }
+            { title: "Rose Agate Timepiece Resin Wall Clock", category: "Mens", price: "1500", actualPrice: "1320", keywords: ["bracelet", "mens", "accessory"] },
+            { title: "Handmade Resin Bracelets - Red", category: "Mens", price: "300", actualPrice: "220", keywords: ["bracelet", "mens", "accessory"] },
+            { title: "Handmade Resin Bracelets - Yellow", category: "Womens", price: "300", actualPrice: "220", keywords: ["necklace", "womens", "jewelry"] },
+            { title: "Resin Candle Holder", category: "Womens", price: "200", actualPrice: "109", keywords: ["necklace", "womens", "jewelry"] },
+            { title: "Resin Earring", category: "Accessories", price: "70", actualPrice: "45", keywords: ["bag", "handbag", "accessories"] },
+            { title: "Resin Earrings (Pack of 4)", category: "Accessories", price: "150", actualPrice: "109", keywords: ["bag", "handbag", "accessories"] },
+            { title: "Sun Moon Scented Candles", category: "Accessories", price: "250", actualPrice: "185", keywords: ["bag", "handbag", "accessories"] },
+            { title: "Handmade Resin Bracelets - Blue", category: "Accessories", price: "300", actualPrice: "220", keywords: ["bag", "handbag", "accessories"] },
+            { title: "Resin Earrings (Pack of 2)", category: "Accessories", price: "100", actualPrice: "69", keywords: ["bag", "handbag", "accessories"] }
         ];
 
         function toggleSearchBox() {
@@ -90,9 +93,9 @@
                 if (filter === 'All' || product.category === filter || product.keywords.includes(filter.toLowerCase())) {
                     const productCard = `
                         <div class="product-card">
-                            <a href="${product.title}.html"><img src="${product.img}" alt="${product.title}">
+                            <a href="./Product-pages/${product.title}.html"><img src="./Media/${product.title}.png" alt="${product.title}">
                             <h3>${product.title}</h3>
-                            <p>${product.description || 'Beautiful handmade item'}</p></a>
+                            <p class="price"><span class="discounted-price">&#8377;${product.actualPrice}</span> <text>${product.price}</text></p></a>
                         </div>`;
                     container.insertAdjacentHTML('beforeend', productCard);
                 }
