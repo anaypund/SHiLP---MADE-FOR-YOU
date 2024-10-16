@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
@@ -31,23 +31,23 @@
     </section> -->
 
     <section class="banner-carousel">
-        <div class="carousel-slide active" style="background-image: url('./Media/Resin\ Earrings\ \(Pack\ of\ 2\).png');">
+        <div class="carousel-slide active" style="background-image: url('./static/images/Resin\ Earrings\ \(Pack\ of\ 2\).png');">
             <div class="overlay"></div>
             <h2>Unique Finds, Made by Hand</h2>
         </div>
-        <div class="carousel-slide" style="background-image: url('./Media/Rose\ Agate\ Timepiece\ Resin\ Wall\ Clock.png');">
+        <div class="carousel-slide" style="background-image: url('./static/images/Rose\ Agate\ Timepiece\ Resin\ Wall\ Clock.png');">
             <div class="overlay"></div>
             <h2>Discover Beautiful Handmade Creations</h2>
         </div>
-        <div class="carousel-slide" style="background-image: url('./Media/Resin\ Earring.png');">
+        <div class="carousel-slide" style="background-image: url('./static/images/Resin\ Earring.png');">
             <div class="overlay"></div>
             <h2>Treasures Crafted Just for You</h2>
         </div>
-        <div class="carousel-slide" style="background-image: url('./Media/Sun\ Moon\ Scented\ Candles.png');">
+        <div class="carousel-slide" style="background-image: url('./static/images/Sun\ Moon\ Scented\ Candles.png');">
             <div class="overlay"></div>
             <h2>Crafted with Heart, Inspired by You</h2>
         </div>
-        <div class="carousel-slide" style="background-image: url('./Media/Resin\ Candle\ Holder.png');">
+        <div class="carousel-slide" style="background-image: url('./static/images/Resin\ Candle\ Holder.png');">
             <div class="overlay"></div>
             <h2>Made with Passion, Loved by All</h2>
         </div>
@@ -71,9 +71,9 @@
 
     <!-- Carousel -->
     <!-- <div class="carousel">
-        <img src="Media\Product.jpeg" alt="Carousel Image 1">
-        <img src="Media\Product.jpeg" alt="Carousel Image 2">
-        <img src="Media\Product.jpeg" alt="Carousel Image 3">
+        <img src="static/images\Product.jpeg" alt="Carousel Image 1">
+        <img src="static/images\Product.jpeg" alt="Carousel Image 2">
+        <img src="static/images\Product.jpeg" alt="Carousel Image 3">
     </div> -->
 
     <!-- Products Section -->
@@ -95,15 +95,9 @@
     <script>
         let searchBoxVisible = false;
         const products = [
-            { title: "Rose Agate Timepiece Resin Wall Clock", category: "Mens", price: "1500", actualPrice: "1320", keywords: ["bracelet", "mens", "accessory"] },
-            { title: "Handmade Resin Bracelets - Red", category: "Mens", price: "300", actualPrice: "220", keywords: ["bracelet", "mens", "accessory"] },
-            { title: "Handmade Resin Bracelets - Yellow", category: "Womens", price: "300", actualPrice: "220", keywords: ["necklace", "womens", "jewelry"] },
-            { title: "Resin Candle Holder", category: "Womens", price: "200", actualPrice: "109", keywords: ["necklace", "womens", "jewelry"] },
-            { title: "Resin Earring", category: "Accessories", price: "70", actualPrice: "45", keywords: ["bag", "handbag", "accessories"] },
-            { title: "Resin Earrings (Pack of 4)", category: "Accessories", price: "150", actualPrice: "109", keywords: ["bag", "handbag", "accessories"] },
-            { title: "Sun Moon Scented Candles", category: "Accessories", price: "250", actualPrice: "185", keywords: ["bag", "handbag", "accessories"] },
-            { title: "Handmade Resin Bracelets - Blue", category: "Accessories", price: "300", actualPrice: "220", keywords: ["bag", "handbag", "accessories"] },
-            { title: "Resin Earrings (Pack of 2)", category: "Accessories", price: "100", actualPrice: "69", keywords: ["bag", "handbag", "accessories"] }
+        {{#each Product}}
+            { title: "{{this.productName}}", image:"{{this.imagePath}}", category: "Mens", price: "1500", actualPrice: "{{this.price}}", keywords: "{{this.keyWords}}" },
+        {{/each}}
         ];
 
         function toggleSearchBox() {
@@ -118,7 +112,7 @@
                 if (filter === 'All' || product.category === filter || product.keywords.includes(filter.toLowerCase())) {
                     const productCard = `
                         <div class="product-card">
-                            <a href="./Product-pages/${product.title}.html"><img src="./Media/${product.title}.png" alt="${product.title}">
+                            <a href="./Product-pages/${product.title}.html"><img src="${product.image}" alt="${product.title}">
                             <h3>${product.title}</h3>
                             <p class="price"><span class="discounted-price">&#8377;${product.actualPrice}</span> <text>${product.price}</text></p></a>
                         </div>`;
@@ -156,7 +150,7 @@
         }
 
         // Optional: Auto-slide every 5 seconds
-        setInterval(() => changeSlide(1), 3000);
+        setInterval(() => changeSlide(1), 2000);
 
     </script>
 </body>
