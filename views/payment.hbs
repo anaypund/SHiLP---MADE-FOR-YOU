@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - SHiLPP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <!-- Header with Search & Icons -->
+    <header class="header">
+        <a href="/"><h1>SHiLPP</h1></a>
+        <div class="header-icons">
+            <a href="/#productContainer"><i class="fas fa-home"></i></a>
+        </div>
+    </header>
+
+    <main>
+        <div class="tabs" style="justify-content: center; display: flex;">
+        <h1>Checkout</h1>
+        </div>
+        
+        <!-- Cart Items -->
+        <div class="cart-items">
+            {{#each cartItems}}
+            <div class="cart-item">
+                <img src="{{this.productId.imagePath}}" alt="{{this.productId.productName}}">
+                <div class="cart-item-details">
+                    <h3>{{this.productId.productName}}</h3>
+                    <p>Price: ₹{{this.productId.price}}</p>
+                    <p>Quantity: {{this.quantity}}</p>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+
+        <!-- Total Section -->
+        <div class="total-section">
+            <h2>Order Summary</h2>
+    <div class="total-breakdown">
+        <span>Subtotal</span>
+        <span>₹{{subTotal}}</span>
+    </div>
+    {{!-- <div class="total-breakdown">
+        <span>Tax (10%)</span>
+        <span>₹{{tax}}</span>
+    </div> --}}
+    <div class="total-breakdown">
+        <span>Shipping</span>
+        <span>₹{{shippingCharges}}</span>
+    </div>
+    <div class="total-breakdown">
+        <span>Total</span>
+        <span class="total-price">₹{{total}}</span>
+    </div>
+    <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+
+        <!-- Payment Form -->
+        <form method="POST" action="/checkout/payment" class="checkout-form">
+            <h2>Payment Options</h2>
+            <div class="form-group">
+                <input type="hidden" name="userId" value="userId">
+                <input type="hidden" name="total" value="{{total}}">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="creditCard">Credit Card</option>
+                    <option value="debitCard">Debit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="netBanking">Net Banking</option>
+                </select>
+            </div>
+
+            <button type="submit" id="pay-button" class="pay-now-btn">Pay Now</button>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 SHiLPP. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+
+
+<script>
+
+document.getElementById('pay-button').onclick = function (e) {
+            e.preventDefault(); // Prevent page reload
+            console.log('Button clicked, creating Razorpay order');
+
+            fetch('/checkout/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: 500 }) // Example amount
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(order => {
+                console.log('Order created:', order); // Confirm order data is received
+
+                // Define Razorpay options
+                const options = {
+                    "key": "YOUR_KEY_ID", // Replace with your actual Razorpay Key ID
+                    "amount": order.amount,
+                    "currency": order.currency,
+                    "name": "SHiLPP",
+                    "description": "Test Transaction",
+                    "order_id": order.id,
+                    "handler": function (response) {
+                        alert("Payment Successful!");
+                        console.log("Payment Success:", response);
+                    },
+                    "prefill": {
+                        "name": "Your Name",
+                        "email": "email@example.com",
+                        "contact": "9999999999"
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+
+                // Create and open the Razorpay instance
+                const razorpay = new Razorpay(options);
+                razorpay.on('payment.failed', function (response){
+                    alert("Payment Failed");
+                    console.error("Payment Failure:", response);
+                });
+                razorpay.open();
+            })
+            .catch(error => console.error('Error creating order:', error));
+        };
+    </script>
