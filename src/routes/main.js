@@ -9,7 +9,7 @@ require('dotenv').config()
 const Razorpay = require('razorpay'); 
 const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
 
-const razorpayInstance = new Razorpay({
+const razorpay = new Razorpay({
     key_id: RAZORPAY_ID_KEY,
     key_secret: RAZORPAY_SECRET_KEY
 });
@@ -154,16 +154,20 @@ routes.get("/checkout/payment", async (req, res) => {
           cartItems.forEach(item => {
               subTotal += item.productId.price * item.quantity;
           });
-        const costumer = await Checkout.find({ userId: userId })
+        const costumer = await Checkout.findOne({ userId: userId })
         if(costumer.state == "Maharashtra" && costumer.city == "Amravati"){
             shippingCharges = 0
         }
         total = subTotal + shippingCharges
           res.render('payment', {
               cartItems: cartItems,
+              userId: userId,
               subTotal: subTotal,
               shippingCharges: shippingCharges,
-              total: total
+              total: total,
+              name: costumer.name,
+              email: costumer.email,
+              contact: costumer.phoneNumber
           });
       } catch (error) {
           console.error('Error fetching cart items:', error);
@@ -236,48 +240,61 @@ routes.post('/checkout/shipping-info', async (req, res) => {
     }
 })
 
-routes.post('/checkout/payment/', async(req,res)=>{
-        console.log('Entered')
-        const amount = req.body.total*100
-        const options = {
-            amount: amount,
-            currency: 'INR',
-            receipt: 'razorUser@gmail.com'
+
+routes.post('/create-order', async (req, res) => {
+    const {currency, receipt, userId } = req.body;
+    const cartItems = await CartItem.find({ userId: Number(userId) }).populate('productId');
+        let shippingCharges = 100
+        let subTotal = 0;
+          cartItems.forEach(item => {
+              subTotal += item.productId.price * item.quantity;
+          });
+        const costumer = await Checkout.find({ userId: Number(userId) })
+        if(costumer.state == "Maharashtra" && costumer.city == "Amravati"){
+            shippingCharges = 0
         }
+        total = subTotal + shippingCharges
+  
+    try {
+      const order = await razorpay.orders.create({
+        amount: total * 100, // amount in the smallest currency unit
+        currency,
+        receipt,
+        payment_capture: '1', // auto capture
+      });
+  
+      res.json(order);
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  });
 
-        const order = await razorpayInstance.orders.create(options, 
-            (err, order)=>{
-                if(!err){
-                    res.status(200).send({
-                        success:true,
-                        msg:'Order Created',
-                        order_id:order.id,
-                        amount:amount,
-                        key_id:RAZORPAY_ID_KEY,
-                        contact:"8087956867",
-                        name: "Anay Pund",
-                        email: "anaypund123@gmail.com"
-                    });
-                }
-                else{
-                    res.status(400).send({success:false,msg:'Something went wrong!'});
-                }
-            }
-        );
+routes.post('/verifyOrder',  (req, res)=>{ 
+    
+    // STEP 7: Receive Payment Data
+    const {order_id, payment_id} = req.body;     
+    const razorpay_signature =  req.headers['x-razorpay-signature'];
 
-    // } catch (error) {
-    //     console.log(error.message);
-    // }
-//     try {
-//         const order = await razorpayInstance.orders.create({
-//             amount: amount * 100, // Razorpay works in paise, so multiply amount by 100
-//             currency:'INR',
-//             receipt: 'order_rcptid_11',
-//         });
-//         res.status(200).json(order);
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
+    // Pass yours key_secret here
+    const key_secret = YAEUthsup8SijNs3iveeVlL1;     
+
+    // STEP 8: Verification & Send Response to User
+    
+    // Creating hmac object 
+    let hmac = crypto.createHmac('sha256', key_secret); 
+
+    // Passing the data to be hashed
+    hmac.update(order_id + "|" + payment_id);
+    
+    // Creating the hmac in the required format
+    const generated_signature = hmac.digest('hex');
+    
+    
+    if(razorpay_signature===generated_signature){
+        res.json({success:true, message:"Payment has been verified"})
+    }
+    else
+    res.json({success:false, message:"Payment verification failed"})
 });
 
 module.exports = routes;

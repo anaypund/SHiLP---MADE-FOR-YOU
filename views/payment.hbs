@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Caveat:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
     <!-- Header with Search & Icons -->
@@ -56,14 +55,17 @@
         <span>Total</span>
         <span class="total-price">₹{{total}}</span>
     </div>
-    <button class="checkout-btn">Proceed to Checkout</button>
+    {{!-- <button class="checkout-btn">Proceed to Checkout</button> --}}
         </div>
 
         <!-- Payment Form -->
-        <form method="POST" action="/checkout/payment" class="checkout-form">
+        <div  class="checkout-form">
             <h2>Payment Options</h2>
             <div class="form-group">
-                <input type="hidden" name="userId" value="userId">
+                <input type="hidden" name="userId" value="{{userId}}" id="userId">
+                <input type="hidden" name="name" value="{{name}}" id="name">
+                <input type="hidden" name="email" value="{{email}}" id="email">
+                <input type="hidden" name="contact" value="{{contact}}" id="contact">
                 <input type="hidden" name="total" value="{{total}}">
                 <label for="paymentMethod">Payment Method</label>
                 <select id="paymentMethod" name="paymentMethod" required>
@@ -74,8 +76,8 @@
                 </select>
             </div>
 
-            <button type="submit" id="pay-button" class="pay-now-btn">Pay Now</button>
-        </form>
+            <button type="submit" id="pay-btn" class="pay-now-btn">Pay Now</button>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -87,56 +89,38 @@
 </html>
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
-document.getElementById('pay-button').onclick = function (e) {
-            e.preventDefault(); // Prevent page reload
-            console.log('Button clicked, creating Razorpay order');
+   document.getElementById('pay-btn').onclick = async function () {
+      const response = await fetch('/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ amount: 1000, currency: 'INR', receipt: 'receipt#1', userId: document.getElementById('userId').value})
+      });
+      const order = await response.json();
+      console.log(order);
 
-            fetch('/checkout/payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ amount: 500 }) // Example amount
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(order => {
-                console.log('Order created:', order); // Confirm order data is received
+      const options = {
+        key: 'rzp_test_TMlzfWIiuTjqpN', // Enter the Key ID generated from the Dashboard
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Shilpp',
+        description: 'Test Transaction',
+        order_id: order.id,
+        handler: function (response) {
+          alert('Payment successful: ' + response.razorpay_payment_id);
+        },
+        prefill: {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          contact: document.getElementById('contact').value
+        }
+      };
 
-                // Define Razorpay options
-                const options = {
-                    "key": "YOUR_KEY_ID", // Replace with your actual Razorpay Key ID
-                    "amount": order.amount,
-                    "currency": order.currency,
-                    "name": "SHiLPP",
-                    "description": "Test Transaction",
-                    "order_id": order.id,
-                    "handler": function (response) {
-                        alert("Payment Successful!");
-                        console.log("Payment Success:", response);
-                    },
-                    "prefill": {
-                        "name": "Your Name",
-                        "email": "email@example.com",
-                        "contact": "9999999999"
-                    },
-                    "theme": {
-                        "color": "#3399cc"
-                    }
-                };
-
-                // Create and open the Razorpay instance
-                const razorpay = new Razorpay(options);
-                razorpay.on('payment.failed', function (response){
-                    alert("Payment Failed");
-                    console.error("Payment Failure:", response);
-                });
-                razorpay.open();
-            })
-            .catch(error => console.error('Error creating order:', error));
-        };
-    </script>
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+    }
+</script>
