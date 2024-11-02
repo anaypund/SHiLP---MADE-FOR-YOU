@@ -110,9 +110,32 @@
         name: 'Shilpp',
         description: 'Test Transaction',
         order_id: order.id,
-        handler: function (response) {
-          alert('Payment successful: ' + response.razorpay_payment_id);
-        },
+        handler: async function (response) {
+      try {
+        // Send POST request to your backend route
+        const paymentResponse = await fetch('/payment-success', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            payment_id: response.razorpay_payment_id,
+            order_id: response.razorpay_order_id,
+            signature: response.razorpay_signature,
+            userId: document.getElementById('userId').value
+          })
+        });
+        
+        const result = await paymentResponse.json();
+        if (result.success) {
+          console.log('Payment confirmation processed successfully.');
+        } else {
+          console.error('Error processing payment confirmation:', result.message);
+        }
+      } catch (error) {
+        console.error('Error in payment confirmation:', error);
+      }
+    },
         prefill: {
           name: document.getElementById('name').value,
           email: document.getElementById('email').value,
