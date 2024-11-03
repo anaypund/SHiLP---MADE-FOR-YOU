@@ -9,7 +9,7 @@ require('dotenv').config()
 const Razorpay = require('razorpay'); 
 const { RAZORPAY_ID_KEY, RAZORPAY_SECRET_KEY } = process.env;
 
-const razorpayInstance = new Razorpay({
+const razorpay = new Razorpay({
     key_id: RAZORPAY_ID_KEY,
     key_secret: RAZORPAY_SECRET_KEY
 });
@@ -18,6 +18,7 @@ const razorpayInstance = new Razorpay({
 const Products = require('../models/products')
 const CartItem = require('../models/CartItem')
 const Checkout = require('../models/Checkout')
+const OrderID = require('../models/orderID')
 
 routes.use(bodyParser.urlencoded({ extended: true }))
 routes.use(bodyParser.json());
@@ -145,17 +146,18 @@ routes.get('/cart', async (req, res) => {
   })
   
 routes.get("/checkout/payment", async (req, res) => {
-    userId = req.query.UserID
+    const userId = Number(req.query.UserID)
+    const orderId = String(req.query.OrderID)
     try {
         // Populate cart items with product details
         const cartItems = await CartItem.find({ userId: userId }).populate('productId');
+        const costumer = await Checkout.findOne({ userId: userId, orderId: orderId})
         let shippingCharges = 100
         let subTotal = 0;
           cartItems.forEach(item => {
               subTotal += item.productId.price * item.quantity;
           });
-        const costumer = await Checkout.findOne({ userId: userId })
-        if(costumer.state == "Maharashtra" && costumer.city == "Amravati"){
+        if(costumer.state == "MH" && costumer.city == "Amravati"){
             shippingCharges = 0
         }
         total = subTotal + shippingCharges
@@ -167,7 +169,8 @@ routes.get("/checkout/payment", async (req, res) => {
               total: total,
               name: costumer.name,
               email: costumer.email,
-              contact: costumer.phoneNumber
+              contact: costumer.phoneNumber,
+              orderId: costumer.orderId
           });
       } catch (error) {
           console.error('Error fetching cart items:', error);
@@ -184,10 +187,24 @@ routes.get('/checkout/shipping-info', async (req, res) => {
 
 routes.post('/checkout/shipping-info', async (req, res) => {
     const {userId, name, phoneNumber, email, state, country, city, address, pincode} = req.body
-    console.log(userId)
-    const checkout = await Checkout.find({ userId: userId })
+    const checkout = await Checkout.findOne({ userId: userId, payFlag: false})
+    
+    const orderID = await OrderID.countDocuments({userId: userId});
+    const orderid = new OrderID({
+        userId: userId,
+        id: String(orderID + 1)
+    });
+    const resultID = String(Number(orderID) + 1)
+    const tempid = await orderid.save();
 
-    if(checkout){
+    const products = await CartItem.find({userId: userId})
+    
+    const productsOrdered = products.map(product => ({
+        productId: product.productId,
+        quantity: product.quantity
+    }));
+    
+    if(checkout == null){
         try{
             const item = new Checkout({
                 userId: userId,
@@ -197,20 +214,24 @@ routes.post('/checkout/shipping-info', async (req, res) => {
                 state: state,
                 country: country,
                 pinCode: pincode,
-                payMethod: 'Not Specified',
+                payFlag: false,
+                amount: 0,
+                orderId: resultID,
+                productsOrdered: productsOrdered,
+                orderCompleted: false,
                 email: email,
                 phoneNumber: phoneNumber
             });
             const tempVar = await item.save();
-            res.redirect(`/checkout/payment?UserID=${userId}`)
+            res.redirect(`/checkout/payment?UserID=${userId}&OrderID=${resultID}`)
         } catch (error) {
             console.error('Error adding customer information:', error);
         }
     }
     else{
         try {
-            const result = await Customer.updateOne(
-                { userId: userId },
+            const result = await Checkout.updateOne(
+                { userId: userId, payFlag: false},
                 { 
                     $set: {
                         userId: userId,
@@ -220,7 +241,11 @@ routes.post('/checkout/shipping-info', async (req, res) => {
                         state: state,
                         country: country,
                         pinCode: pincode,
-                        payMethod: 'Not Specified',
+                        payFlag: false,
+                        amount: 0,
+                        orderId: resultID,
+                        productsOrdered: productsOrdered,
+                        orderCompleted: false,
                         email: email,
                         phoneNumber: phoneNumber
                     }
@@ -232,13 +257,13 @@ routes.post('/checkout/shipping-info', async (req, res) => {
             } else {
                 console.log('No customer found with the specified userId.');
             }
-            res.redirect(`/checkout/payment?UserID=${userId}`)
+            res.redirect(`/checkout/payment?UserID=${userId}&OrderID=${resultID}`)
         } catch (error) {
             console.error('Error updating customer information:', error);
         }
         
     }
-})
+});
 
 
 routes.post('/create-order', async (req, res) => {
@@ -250,7 +275,7 @@ routes.post('/create-order', async (req, res) => {
               subTotal += item.productId.price * item.quantity;
           });
         const costumer = await Checkout.find({ userId: Number(userId) })
-        if(costumer.state == "Maharashtra" && costumer.city == "Amravati"){
+        if(costumer.state == "MH" && costumer.city == "Amravati"){
             shippingCharges = 0
         }
         total = subTotal + shippingCharges
@@ -269,11 +294,39 @@ routes.post('/create-order', async (req, res) => {
     }
   });
 
-routes.post('/payment-success',  (req, res)=>{ 
+routes.post('/payment-success', async(req, res)=>{ 
     
-   const {payment_id, order_id, signature, userId} = req.body
+   const {payment_id, amount, order_id, signature, userId, orderId} = req.body
+   console.log("Order ID: ", orderId)
+   const result = await Checkout.updateOne(
+    { userId: Number(userId), orderId: String(orderId) },
+    { 
+        $set: {
+            payFlag: true,
+            amount: amount/100,
+            orderId: String(order_id),
+            orderCompleted: false,
+        }
+    }
+);
    console.log(payment_id, order_id, signature, userId)
-   res.status(200).redirect('payment-success')
+   res.status(200).redirect(`/payment-success?orderId=${order_id}`)
 });
+
+routes.get('/payment-success', async(req, res)=>{
+    const orderId = req.query.orderId;
+    console.log("Success", orderId)
+    const customer = await Checkout.findOne({orderId: orderId})
+    console.log("Success", customer)
+    const tempName = customer.name
+    console.log(tempName)
+    const name = tempName.split(" ")[0]
+    res.render('payment-success',{
+        orderId: customer.orderId,
+        paymentId:customer.payment_id,
+        amount:customer.amount,
+        name:name,
+    })
+})
 
 module.exports = routes;

@@ -740,3 +740,91 @@ body {
 .pay-now-btn:hover {
     background-color: #5c4f4f; /* Lighter on hover */
 }
+
+
+/******************* Payment-success **********************/
+/* Payment Success Styles */
+.payment-success {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 80vh;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.success-container {
+    max-width: 600px;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.success-icon {
+    font-size: 80px;
+    color: #00b894;
+    margin-bottom: 15px;
+}
+
+.payment-success h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 2rem;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+.payment-success p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.transaction-summary {
+    margin: 20px 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.transaction-summary h3 {
+    color: #2300a3;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.transaction-summary ul {
+    list-style: none;
+    padding: 0;
+    font-size: 1rem;
+    color: #444;
+}
+
+.transaction-summary li {
+    margin: 8px 0;
+}
+
+.button {
+    display: inline-block;
+    margin: 10px 5px;
+    padding: 10px 20px;
+    background: #2300a3;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.button:hover {
+    background: #1a007a;
+}
+
+.button.secondary {
+    background: #555;
+}
+
+.button.secondary:hover {
+    background: #333;
+}

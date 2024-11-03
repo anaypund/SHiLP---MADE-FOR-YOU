@@ -63,10 +63,11 @@
             <h2>Payment Options</h2>
             <div class="form-group">
                 <input type="hidden" name="userId" value="{{userId}}" id="userId">
+                <input type="hidden" name="orderId" value="{{orderId}}" id="orderId">
                 <input type="hidden" name="name" value="{{name}}" id="name">
                 <input type="hidden" name="email" value="{{email}}" id="email">
                 <input type="hidden" name="contact" value="{{contact}}" id="contact">
-                <input type="hidden" name="total" value="{{total}}">
+                <input type="hidden" name="total" value="{{total}}" id="total">
                 <label for="paymentMethod">Payment Method</label>
                 <select id="paymentMethod" name="paymentMethod" required>
                     <option value="creditCard">Credit Card</option>
@@ -111,7 +112,7 @@
         description: 'Test Transaction',
         order_id: order.id,
         handler: async function (response) {
-      try {
+
         // Send POST request to your backend route
         const paymentResponse = await fetch('/payment-success', {
           method: 'POST',
@@ -122,19 +123,18 @@
             payment_id: response.razorpay_payment_id,
             order_id: response.razorpay_order_id,
             signature: response.razorpay_signature,
-            userId: document.getElementById('userId').value
+            amount: order.amount,
+            userId: document.getElementById('userId').value,
+            orderId: document.getElementById('orderId').value
           })
-        });
-        
-        const result = await paymentResponse.json();
-        if (result.success) {
-          console.log('Payment confirmation processed successfully.');
-        } else {
-          console.error('Error processing payment confirmation:', result.message);
-        }
-      } catch (error) {
-        console.error('Error in payment confirmation:', error);
-      }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Redirect to /pay if the POST request was successful
+                window.location.href = `/payment-success?orderId=${response.razorpay_order_id}`;
+            }
+        })
+        .catch(error => console.error('Error:', error));
     },
         prefill: {
           name: document.getElementById('name').value,

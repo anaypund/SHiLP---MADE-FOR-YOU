@@ -1,4 +1,3 @@
-// models/CartItem.js
 const mongoose = require('mongoose');
 
 const checkoutSchema = new mongoose.Schema({
@@ -27,8 +26,29 @@ const checkoutSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  payMethod:{
+  payFlag:{
+    type: Boolean,
+    required: true
+  },
+  amount:{
+    type: Number,
+    required: true,
+  },
+  payment_id:{
+    type: String
+  },
+  orderId:{
     type: String,
+    required: true
+  },
+  productsOrdered:[
+    {
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: 'productSchema', required: true },
+      quantity: { type: Number, required: true }
+    }
+  ],
+  orderCompleted:{
+    type: Boolean,
     required: true
   },
   email:{

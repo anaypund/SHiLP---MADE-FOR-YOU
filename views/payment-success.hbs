@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success - SHiLPP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Header with SHiLPP branding and icons -->
+    <header class="header">
+        <a href="/"><h1>SHiLPP</h1></a>
+        <div class="header-icons">
+            <a href="/"><i class="fas fa-home"></i></a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="payment-success">
+        <div class="success-container">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h2>Payment Successful!</h2>
+            <p>Thank you, <b>{{name}}</b> for your purchase. Your transaction has been successfully completed.</p>
+
+            <div class="transaction-summary">
+                <h3>Transaction Summary</h3>
+                <ul>
+                    <li><strong>Order ID:</strong> {{orderId}}</li>
+                    <li><strong>Payment ID:</strong> {{paymentId}}</li>
+                    <li><strong>Amount Paid:</strong> ₹{{amount}}</li>
+                </ul>
+            </div>
+
+            <a href="/" class="button">Continue Shopping</a>
+            <a href="/orders" class="button secondary">View Orders</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 SHiLPP. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
