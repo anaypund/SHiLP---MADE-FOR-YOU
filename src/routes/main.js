@@ -306,11 +306,13 @@ routes.post('/payment-success', async(req, res)=>{
             amount: amount/100,
             orderId: String(order_id),
             orderCompleted: false,
+            payment_id: payment_id
         }
     }
 );
    console.log(payment_id, order_id, signature, userId)
-   res.status(200).redirect(`/payment-success?orderId=${order_id}`)
+//    res.status(200).redirect(`/payment-success?orderId=${order_id}`)
+    res.status(200).json({ redirectUrl: `/payment-success?orderId=${order_id}` });
 });
 
 routes.get('/payment-success', async(req, res)=>{

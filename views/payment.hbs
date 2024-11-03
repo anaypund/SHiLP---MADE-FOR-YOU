@@ -127,14 +127,13 @@
             userId: document.getElementById('userId').value,
             orderId: document.getElementById('orderId').value
           })
-        })
-        .then(response => {
-            if (response.ok) {
-                // Redirect to /pay if the POST request was successful
-                window.location.href = `/payment-success?orderId=${response.razorpay_order_id}`;
-            }
-        })
-        .catch(error => console.error('Error:', error));
+        }).catch(error => console.error('Error:', error));
+
+        const result = await paymentResponse.json();
+        if (result.redirectUrl) {
+            // Perform client-side redirect
+            window.location.href = result.redirectUrl;
+        }
     },
         prefill: {
           name: document.getElementById('name').value,
